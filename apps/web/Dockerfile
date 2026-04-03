@@ -15,6 +15,7 @@ COPY . .
 RUN mkdir -p public && npm run build
 
 FROM node:20-alpine AS runner
+RUN apk add --no-cache wget
 WORKDIR /app
 ENV NODE_ENV=production
 COPY --from=build /app/public ./public
