@@ -27,7 +27,8 @@ COPY --from=build /app/.next/static ./.next/static
 COPY --from=build /app/scripts/start-prod.cjs ./scripts/start-prod.cjs
 
 EXPOSE 3001
-HEALTHCHECK --interval=10s --timeout=5s --start-period=40s --retries=5 \
-  CMD wget -qO- http://127.0.0.1:3001/health >/dev/null || exit 1
+# Use $PORT so the check matches even if Coolify overrides PORT at runtime.
+HEALTHCHECK --interval=10s --timeout=5s --start-period=30s --retries=5 \
+  CMD wget -qO- http://127.0.0.1:${PORT:-3001}/health >/dev/null || exit 1
 
 CMD ["node", "scripts/start-prod.cjs"]
