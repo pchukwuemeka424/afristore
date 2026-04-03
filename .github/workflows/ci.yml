@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+      mongo:
+        image: mongo:7
+        ports:
+          - 27017:27017
+
+    env:
+      DATABASE_URL: mongodb://127.0.0.1:27017/afristore_ci
+      JWT_SECRET: ci-test-secret-minimum-32-chars-long
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Seed templates
+        run: npm run db:seed -w backend
+
+      - name: Build backend
+        run: npm run build -w backend
+
+      - name: Build web
+        run: npm run build -w apps/web
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:3001

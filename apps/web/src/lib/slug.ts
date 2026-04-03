@@ -1,0 +1,9 @@
+/** URL-safe store identifier (subdomain / path slug). */
+export function slugify(s: string) {
+  return s
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 40);
+}
