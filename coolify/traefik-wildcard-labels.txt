@@ -1,0 +1,11 @@
+# Paste into Coolify → Web app → Advanced → Custom Docker Labels (or equivalent)
+# ONLY if subdomains still return 503 after a full rebuild — some Coolify builds omit image LABELs.
+# One key=value per line. Domains must still be apex-only: https://acetchapp.link (no *. in Coolify Domains).
+# Edit acetchapp.link if your apex differs.
+
+traefik.http.routers.afristore-wildcard.entrypoints=https,http
+traefik.http.routers.afristore-wildcard.priority=10000
+traefik.http.routers.afristore-wildcard.tls=true
+traefik.http.routers.afristore-wildcard.service=afristore-wildcard-svc
+traefik.http.services.afristore-wildcard-svc.loadbalancer.server.port=3000
+traefik.http.routers.afristore-wildcard.rule=HostRegexp(`^[a-z0-9-]+\.acetchapp\.link$`) && !Host(`api.acetchapp.link`) && !Host(`coolify.acetchapp.link`)

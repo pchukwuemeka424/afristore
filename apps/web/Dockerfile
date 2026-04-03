@@ -24,12 +24,12 @@ ENV NODE_ENV=production
 # routing + tls without certresolver (works with Cloudflare SSL "Full"). Edit the rule if apex ≠ acetchapp.link.
 LABEL traefik.enable="true" \
   traefik.http.routers.afristore-wildcard.entrypoints="https,http" \
-  traefik.http.routers.afristore-wildcard.priority="1000" \
+  traefik.http.routers.afristore-wildcard.priority="10000" \
   traefik.http.routers.afristore-wildcard.tls="true" \
   traefik.http.routers.afristore-wildcard.service="afristore-wildcard-svc" \
   traefik.http.services.afristore-wildcard-svc.loadbalancer.server.port="3000"
-# Named matcher avoids `$` in Dockerfile (BuildKit mangles `$$`). Excludes api / coolify hosts.
-LABEL traefik.http.routers.afristore-wildcard.rule="HostRegexp(`{subdomain:[a-z0-9-]+}.acetchapp.link`) && !Host(`api.acetchapp.link`) && !Host(`coolify.acetchapp.link`)"
+# Plain HostRegexp; use \z end anchor (avoid `$` in Dockerfile). Do not escape backticks — Traefik needs `…` literals.
+LABEL traefik.http.routers.afristore-wildcard.rule="HostRegexp(`^[a-z0-9-]+\\.acetchapp\\.link\\z`) && !Host(`api.acetchapp.link`) && !Host(`coolify.acetchapp.link`)"
 COPY --from=build /app/public ./public
 COPY --from=build /app/.next/standalone ./
 COPY --from=build /app/.next/static ./.next/static

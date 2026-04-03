@@ -71,3 +71,12 @@ npm run db:seed -w backend
 **If you added a manual file** under `/data/coolify/proxy/dynamic/` for wildcards earlier, remove it to avoid duplicate routers, then `docker restart coolify-proxy`.
 
 **Other apex domains:** edit the `traefik.http.routers.afristore-wildcard.rule` `LABEL` in `apps/web/Dockerfile` so the host matches `NEXT_PUBLIC_STORE_BASE`.
+
+**Server (Coolify → Servers → localhost → General):** set **Wildcard Domain** to `acetchapp.link` only — **no** `https://` prefix (that field expects a hostname, not a URL).
+
+### Still “no available server” on `https://slug.yourdomain.com`?
+
+1. **Redeploy the web app** with a **full rebuild** (not “use cached image”) so the latest `apps/web/Dockerfile` `LABEL`s are in the image.
+2. On the server: `docker inspect <web-container-name> --format '{{json .Config.Labels}}'` and confirm keys like `traefik.http.routers.afristore-wildcard.rule` exist. If they are **missing**, Coolify did not inherit image labels — open **Advanced → Custom Docker Labels** for the web service and paste the lines from `coolify/traefik-wildcard-labels.txt` (edit the domain if needed), then redeploy.
+3. **DNS:** `*.acetchapp.link` must resolve to the same server as the apex.
+4. `docker logs coolify-proxy --tail 30` — look for Traefik errors about `HostSNI` or duplicate routers.
