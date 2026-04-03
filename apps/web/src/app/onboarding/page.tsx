@@ -80,8 +80,7 @@ export default function OnboardingPage() {
         <div>
           <label className="block text-sm font-medium">Subdomain (URL slug)</label>
           <p className="mt-0.5 text-xs text-earth-800/70">
-            Letters, numbers, and hyphens. Must be unique — this becomes your public path{' '}
-            <code className="rounded bg-earth-100 px-1">/s/…</code> and your subdomain on a mapped domain.
+            Letters, numbers, and hyphens. Must be unique — this becomes your public storefront subdomain.
           </p>
           <input
             className="mt-2 w-full rounded-xl border border-earth-800/15 bg-white px-3 py-2 font-mono text-sm"
