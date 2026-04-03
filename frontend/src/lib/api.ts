@@ -2,6 +2,34 @@ const API_ORIGIN = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
 /** Browser: empty → fetch `/api/...` on the web origin (Next rewrites to backend). SSR: absolute backend URL. */
 const API = typeof window === 'undefined' ? API_ORIGIN : '';
 
+/** Avoid rendering Cloudflare/HTML error pages as user-visible error text. */
+function messageFromFailedResponse(status: number, body: string): string {
+  const trimmed = body.trim();
+  const looksLikeHtml =
+    trimmed.startsWith('<!') ||
+    trimmed.startsWith('<html') ||
+    /<html[\s>]/i.test(trimmed) ||
+    trimmed.includes('<!DOCTYPE');
+
+  if (!looksLikeHtml) {
+    try {
+      const j = JSON.parse(trimmed) as { message?: unknown; error?: unknown };
+      if (typeof j.message === 'string') return j.message;
+      if (typeof j.error === 'string') return j.error;
+    } catch {
+      /* not JSON */
+    }
+    if (trimmed.length > 0 && trimmed.length <= 500 && !trimmed.includes('<')) {
+      return trimmed;
+    }
+  }
+
+  if (status === 520 || status === 502 || status === 503 || status === 504) {
+    return 'The API could not be reached (server or proxy error). Check that the backend is running and healthy, then try again.';
+  }
+  return `Request failed (${status}). Please try again.`;
+}
+
 export function getToken(): string | null {
   if (typeof window === 'undefined') return null;
   return localStorage.getItem('afristore_access');
@@ -57,7 +85,7 @@ export async function apiFetch<T>(
 
   if (!res.ok) {
     const errText = await res.text();
-    throw new Error(errText || res.statusText);
+    throw new Error(messageFromFailedResponse(res.status, errText) || res.statusText);
   }
   if (res.status === 204) return undefined as T;
   return res.json() as Promise<T>;
@@ -84,7 +112,7 @@ export async function uploadProductImage(storeId: string, file: File): Promise<s
   }
   if (!res.ok) {
     const errText = await res.text();
-    throw new Error(errText || res.statusText);
+    throw new Error(messageFromFailedResponse(res.status, errText) || res.statusText);
   }
   const data = (await res.json()) as { url: string };
   return data.url;
@@ -108,7 +136,7 @@ export async function uploadStoreLogo(storeId: string, file: File): Promise<stri
   }
   if (!res.ok) {
     const errText = await res.text();
-    throw new Error(errText || res.statusText);
+    throw new Error(messageFromFailedResponse(res.status, errText) || res.statusText);
   }
   const data = (await res.json()) as { url: string };
   return data.url;
@@ -132,7 +160,7 @@ export async function uploadStoreHeroImage(storeId: string, file: File): Promise
   }
   if (!res.ok) {
     const errText = await res.text();
-    throw new Error(errText || res.statusText);
+    throw new Error(messageFromFailedResponse(res.status, errText) || res.statusText);
   }
   const data = (await res.json()) as { url: string };
   return data.url;
