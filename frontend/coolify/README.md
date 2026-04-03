@@ -13,44 +13,31 @@ Use service-level env files:
 
 ## Service setup in Coolify
 
-| Service | Build context | Dockerfile | Exposed port |
+| Service | Base directory | Build | Exposed port |
 |---|---|---|---|
-| Backend | repository root | `backend/Dockerfile` | `3001` |
+| Backend | `backend` | **Nixpacks** (no Dockerfile in repo) | `3001` |
 | Frontend | repository root | `frontend/Dockerfile` | `3000` |
 
-### Docker build fails: `package-lock.json` / `/backend` / `start-prod.cjs` not found
+### Backend (no Docker image — Nixpacks / Node)
 
-If the log shows **`transferring context: ~825B`** (or any tiny size) and errors like **`failed to calculate checksum ... "/package-lock.json": not found`**, Coolify is using the **wrong base directory** (often `/backend`). This Dockerfile needs the **whole repository** as context:
+The backend is deployed as a **normal Node app**, not a custom Docker image.
 
-1. Open the **backend** resource → **Build** settings.
-2. Set **Base directory** to **`/`** or **leave it empty** (repository root). **Do not** use `backend` or `/backend`.
-3. Set **Dockerfile location** to **`backend/Dockerfile`** (path relative to that root).
-4. Save and **Deploy** again.
+1. **Build pack:** **Nixpacks** (Coolify default).
+2. **Base directory:** **`backend`**.
+3. **Port / env:** Set **Network** port to **`3001`** and add **`PORT=3001`** in environment variables so Traefik and the app agree.
+4. **Install / build / start** (if Coolify does not auto-detect): install in `backend`, run **`npm run build`**, then **`npm start`** (`package.json` uses `node scripts/start-prod.cjs`, which matches `output: 'standalone'` in Next.js).
+5. **Healthcheck:** `http://127.0.0.1:3001/health` — plain URL only (no pasted shell/`npm` text).
 
-Until the base directory is the repo root, Docker cannot see `package-lock.json`, `frontend/`, or `backend/` together.
-
-### Backend: logs still show `next start` or standalone warning
-
-That output means the container is **not** using the image `CMD` (`node scripts/start-prod.cjs`). Fix **all** of the following on the **backend** service:
-
-1. **Build pack:** **Dockerfile** (Coolify defaults to Nixpacks — switch it).
-2. **Base directory:** **`/`** (repo root). The Dockerfile copies the monorepo root; a base of `/backend` alone will not match this Dockerfile’s `COPY` layout.
-3. **Dockerfile path:** `backend/Dockerfile`.
-4. **Start command:** **clear it** (empty). If Coolify has `next start -p 3001` or `npm start` saved from an old setup, it overrides the Dockerfile and you will keep seeing `next start`. Optional explicit value: `node scripts/start-prod.cjs` (working directory is the image default).
-5. **Redeploy:** use **Rebuild** / disable “use cached image” so a new image is built from the current Git commit (otherwise an old layer can still contain the previous `package.json` scripts).
-
-**Healthcheck (Coolify):** `http://127.0.0.1:3001/health` or `…/api/health` — plain URL only (no env interpolation, no pasted `npm` output). If deployment logs show a garbled URL like `localhost:…@0.1.0 start`, clear the field and re-enter; port must be **3001** for this API.
-
-**“No production server found”** with `node scripts/start-prod.cjs`: older launchers used `process.cwd()`; the script now resolves `server.js` from its path so a wrong container working directory still works. Redeploy after pulling that change.
+Do **not** set a custom start command to `next start` for production; use **`npm start`** or **`node scripts/start-prod.cjs`** after a build.
 
 ### Backend: Traefik / browser shows “No available server”
 
 That usually means the **proxy has no healthy upstream** (wrong port, failed healthcheck, or the app never listened).
 
-1. **Application port** — In Coolify **Network** / **Ports** for the **backend** service, set the port to **3001** (not Coolify’s default **3000**). It must match `EXPOSE` / `PORT` in `backend/Dockerfile`.
+1. **Application port** — Backend **Network** port and **`PORT`** env must both be **`3001`** (or both **`3000`** if you standardize on Coolify’s default — they must match).
 2. **Healthcheck URL** — Prefer `http://127.0.0.1:3001/health` (or `…/api/health`). One plain URL; no env placeholders or pasted shell/`npm` text.
-3. **Logs** — Confirm the container prints Next.js **Ready** and is listening on **0.0.0.0** (the image sets `HOSTNAME=0.0.0.0`). If the process exits immediately, check `docker logs` for errors.
-4. **Redeploy** after changing port or healthcheck so Traefik picks up a healthy container.
+3. **Logs** — Confirm Next.js **Ready** and listening on **0.0.0.0**. Set **`HOSTNAME=0.0.0.0`** if the process only binds to localhost.
+4. **Redeploy** after changing port or healthcheck so Traefik picks up a healthy target.
 
 ## Required environment variables
 
@@ -71,10 +58,15 @@ Optional backend integrations:
 
 ## Build reference (local parity)
 
-From the **repository root**:
+**Backend** (no Docker in repo — run Node locally):
 
 ```bash
-docker build -t afristore-backend -f backend/Dockerfile .
+npm run build -w backend && npm run start -w backend
+```
+
+**Frontend** image (from repository root):
+
+```bash
 docker build -t afristore-frontend -f frontend/Dockerfile . \
   --build-arg NEXT_PUBLIC_API_URL=https://api.yourdomain.com \
   --build-arg NEXT_PUBLIC_STORE_BASE=shop.yourdomain.com
