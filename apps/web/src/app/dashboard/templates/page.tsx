@@ -1044,7 +1044,7 @@ function TemplateManagementPageContent() {
       .then((id) => {
         if (cancelled) return;
         setOnboardingTemplateId(id);
-        if (!id) setOnboardingTemplateError('No base template found. Add a template in the admin, then try again.');
+        if (!id) setOnboardingTemplateError('No base template found.');
       })
       .catch(() => {
         if (!cancelled) {
@@ -1288,9 +1288,15 @@ function TemplateManagementPageContent() {
                 </p>
               )}
               {onboardingTemplateError && (
-                <p className="w-full text-sm text-red-600" role="alert">
-                  {onboardingTemplateError}
-                </p>
+                <div className="w-full rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700" role="alert">
+                  <p className="font-medium">{onboardingTemplateError}</p>
+                  <p className="mt-1">
+                    Add a template in admin, then try again.{' '}
+                    <a href="/dashboard/templates" className="underline decoration-red-400 underline-offset-2 hover:text-red-800">
+                      /dashboard/templates
+                    </a>
+                  </p>
+                </div>
               )}
             </>
           ) : (

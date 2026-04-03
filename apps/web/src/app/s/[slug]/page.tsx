@@ -1,4 +1,5 @@
 import { StorefrontShell } from '@/components/storefront/StorefrontShell';
+import { notFound } from 'next/navigation';
 
 type Product = {
   id: string;
@@ -24,12 +25,6 @@ async function load(slug: string) {
 export default async function StorefrontPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const data = await load(slug);
-  if (!data) {
-    return (
-      <div className="min-h-screen flex items-center justify-center px-6">
-        <p className="text-earth-800/80">Store not found.</p>
-      </div>
-    );
-  }
+  if (!data) notFound();
   return <StorefrontShell store={data.store} products={data.products} />;
 }
