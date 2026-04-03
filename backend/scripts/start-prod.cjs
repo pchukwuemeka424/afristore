@@ -1,19 +1,27 @@
 /**
- * Production server entry: works in Docker (server.js next to this file's cwd)
- * and locally after `next build` (under .next/standalone/backend/server.js).
+ * Production server entry.
+ *
+ * Standalone output location depends on how the image was built:
+ *  - backend-only context (Coolify base=backend):  .next/standalone/server.js
+ *  - monorepo context (Coolify base=/):            .next/standalone/backend/server.js
+ *  - Docker image (server.js next to this script)
  */
 const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
 
 const port = process.env.PORT || '3001';
-// Resolve from this file (…/backend/scripts/), not process.cwd() — Coolify/Docker may run
-// `node scripts/start-prod.cjs` with a cwd that is not the app root.
-const backendRoot = path.join(__dirname, '..');
+// Resolve from this file's directory, never from process.cwd().
+const scriptDir = __dirname;               // …/scripts
+const appRoot   = path.join(scriptDir, '..'); // one level up = backend root in image
 
 const candidates = [
-  path.join(backendRoot, 'server.js'),
-  path.join(backendRoot, '.next', 'standalone', 'backend', 'server.js'),
+  // Docker image: server.js lives in same dir as .next/ (WORKDIR = /app in runner)
+  path.join(appRoot, 'server.js'),
+  // backend-only build: standalone at .next/standalone/
+  path.join(appRoot, '.next', 'standalone', 'server.js'),
+  // monorepo build: standalone at .next/standalone/backend/
+  path.join(appRoot, '.next', 'standalone', 'backend', 'server.js'),
 ];
 
 for (const main of candidates) {
