@@ -1,4 +1,3 @@
-# Build from `backend` directory: `docker build -f Dockerfile .`
 FROM node:20-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json* ./
@@ -13,10 +12,11 @@ RUN npm run build
 FROM node:20-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/.next ./.next
-COPY --from=build /app/package.json ./
-COPY --from=build /app/next.config.ts ./
-EXPOSE 3001
-ENV PORT=3001
-CMD ["npm", "run", "start"]
+ENV HOSTNAME=0.0.0.0
+ENV PORT=3000
+
+COPY --from=build /app/.next/standalone ./
+COPY --from=build /app/.next/static ./.next/static
+
+EXPOSE 3000
+CMD ["node", "server.js"]
