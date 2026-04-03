@@ -1,0 +1,32 @@
+# Build context: ONLY the backend/ folder (Coolify "Base directory" = backend).
+# Prefer repo root + backend/Dockerfile or docker-compose.coolify.yml — this file is for when Coolify
+# cannot send the monorepo root as context (~825B context, COPY package-lock.json not found).
+FROM node:20-alpine AS deps
+WORKDIR /app
+COPY package.json ./
+RUN npm install
+
+FROM node:20-alpine AS build
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN npm run build
+
+FROM node:20-alpine AS runner
+RUN apk add --no-cache wget
+WORKDIR /app
+ENV NODE_ENV=production
+ENV HOSTNAME=0.0.0.0
+ENV PORT=3001
+
+COPY --from=build /app/.next/standalone ./
+WORKDIR /app/backend
+COPY --from=build /app/.next/static ./.next/static
+COPY --from=build /app/scripts/start-prod.cjs ./scripts/start-prod.cjs
+
+EXPOSE 3001
+HEALTHCHECK --interval=10s --timeout=5s --start-period=40s --retries=5 \
+  CMD wget -qO- http://127.0.0.1:3001/health >/dev/null || exit 1
+
+CMD ["node", "scripts/start-prod.cjs"]
