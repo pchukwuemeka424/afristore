@@ -1,5 +1,7 @@
-# Build context: repository root (`afristore/`), e.g.
-# docker build -f backend/Dockerfile .
+# Build context MUST be the monorepo root (directory that contains backend/, frontend/, package-lock.json).
+#   docker build -f backend/Dockerfile .
+# Coolify: set "Base directory" to / or leave empty — NOT /backend. If the build log shows
+#   "transferring context: ~825B" and COPY fails for package-lock.json or /backend, your base directory is wrong.
 FROM node:20-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
@@ -26,8 +28,8 @@ ENV PORT=3001
 COPY --from=build /app/backend/.next/standalone ./
 WORKDIR /app/backend
 COPY --from=build /app/backend/.next/static ./.next/static
-# Launcher + npm start (e.g. Coolify) use the same entry as CMD
-COPY backend/scripts/start-prod.cjs ./scripts/start-prod.cjs
+# From build stage so the runner does not need host path backend/scripts/ (same context rules as above).
+COPY --from=build /app/backend/scripts/start-prod.cjs ./scripts/start-prod.cjs
 
 EXPOSE 3001
 # Coolify: leave "Custom start command" empty, or use: node scripts/start-prod.cjs
