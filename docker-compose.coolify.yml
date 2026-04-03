@@ -1,9 +1,0 @@
-# Coolify: deploy the backend with correct build context (monorepo root).
-# Use this as the Compose file, or run: docker compose -f docker-compose.coolify.yml build
-services:
-  backend:
-    build:
-      context: .
-      dockerfile: backend/Dockerfile
-    ports:
-      - "3001:3001"

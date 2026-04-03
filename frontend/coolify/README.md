@@ -20,25 +20,14 @@ Use service-level env files:
 
 ### Docker build fails: `package-lock.json` / `/backend` / `start-prod.cjs` not found
 
-If the log shows **`transferring context: ~825B`** (or any tiny size) and errors like **`failed to calculate checksum ... "/package-lock.json": not found`**, Coolify is only sending the **`backend/`** folder as the build context. You can fix it in either of these ways:
+If the log shows **`transferring context: ~825B`** (or any tiny size) and errors like **`failed to calculate checksum ... "/package-lock.json": not found`**, Coolify is using the **wrong base directory** (often `/backend`). This Dockerfile needs the **whole repository** as context:
 
-**Option A — recommended (monorepo Dockerfile)**
+1. Open the **backend** resource → **Build** settings.
+2. Set **Base directory** to **`/`** or **leave it empty** (repository root). **Do not** use `backend` or `/backend`.
+3. Set **Dockerfile location** to **`backend/Dockerfile`** (path relative to that root).
+4. Save and **Deploy** again.
 
-1. **Base directory:** **`/`** or empty (repository root). **Not** `backend`.
-2. **Dockerfile:** **`backend/Dockerfile`**
-3. Deploy again. The build context should be **hundreds of kB or more**, not ~825B.
-
-**Option B — keep Base directory = `backend`**
-
-If you cannot change the base directory, point Coolify at the backend-only Dockerfile:
-
-1. **Base directory:** **`backend`** (or `/backend`, depending on UI).
-2. **Dockerfile:** **`Dockerfile.context-backend`** (file lives next to the default `Dockerfile` in `backend/`).
-3. That file installs deps with `npm install` inside `backend/` only and does **not** need the root `package-lock.json`.
-
-**Option C — Docker Compose**
-
-Use **`docker-compose.coolify.yml`** at the **repository root** as the Compose file (if your Coolify setup supports it). It sets `build.context: .` and `dockerfile: backend/Dockerfile` so the image always builds from the full monorepo.
+Until the base directory is the repo root, Docker cannot see `package-lock.json`, `frontend/`, or `backend/` together.
 
 ### Backend: logs still show `next start` or standalone warning
 
