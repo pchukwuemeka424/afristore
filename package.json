@@ -2,14 +2,14 @@
   "name": "afristore",
   "private": true,
   "workspaces": [
-    "apps/*",
-    "backend",
-    "packages/*"
+    "frontend",
+    "frontend/shared",
+    "backend"
   ],
   "scripts": {
-    "dev": "concurrently -n backend,web -c blue,green \"npm run dev -w backend\" \"npm run dev -w apps/web\"",
-    "build": "npm run build -w backend && npm run build -w apps/web",
-    "lint": "npm run lint -w backend && npm run lint -w apps/web",
+    "dev": "concurrently -n backend,frontend -c blue,green \"npm run dev -w backend\" \"npm run dev -w frontend\"",
+    "build": "npm run build -w backend && npm run build -w frontend",
+    "lint": "npm run lint -w backend && npm run lint -w frontend",
     "db:seed": "npm run db:seed -w backend"
   },
   "devDependencies": {

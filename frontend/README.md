@@ -1,7 +1,7 @@
 # AfriStore
 
 AfriStore is an Africa-focused commerce platform that helps entrepreneurs launch and run online stores quickly.  
-It includes a **Next.js backend** (`backend`), **Next.js web app** (`apps/web`), and **MongoDB** data layer.
+It includes a **Next.js API** (`backend`), **Next.js web app** (`frontend`), and **MongoDB** data layer.
 
 ## What the project is about
 
@@ -33,7 +33,10 @@ The platform is designed to reduce the barrier to digital commerce by combining 
 
 See [docs/DEVELOPER_ONBOARDING.md](docs/DEVELOPER_ONBOARDING.md) for full onboarding.
 
+From the **repository root** (where `package.json` and `docker-compose.yml` live):
+
 ```bash
+npm install
 docker compose up -d mongo
 npm run db:seed
 npm run dev
@@ -41,7 +44,7 @@ npm run dev
 
 Environment files are service-scoped:
 - `backend/.env`
-- `apps/web/.env`
+- `frontend/.env`
 
 - **API**: http://localhost:3001/api  
 - **Web**: http://localhost:3000  
@@ -51,9 +54,9 @@ Environment files are service-scoped:
 | Path | Purpose |
 |------|---------|
 | `backend/` | Next.js API (Mongoose, auth, webhooks, AI) |
-| `apps/web` | Next.js dashboard + storefront |
-| `packages/shared` | Shared types (optional) |
-| `coolify/` | Deployment notes |
+| `frontend/` | Next.js dashboard + storefront |
+| `frontend/shared` | Shared types (optional) |
+| `frontend/coolify/` | Deployment notes |
 
 ## License
 
