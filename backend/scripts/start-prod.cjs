@@ -7,11 +7,13 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 
 const port = process.env.PORT || '3001';
-const here = process.cwd();
+// Resolve from this file (…/backend/scripts/), not process.cwd() — Coolify/Docker may run
+// `node scripts/start-prod.cjs` with a cwd that is not the app root.
+const backendRoot = path.join(__dirname, '..');
 
 const candidates = [
-  path.join(here, 'server.js'),
-  path.join(here, '.next', 'standalone', 'backend', 'server.js'),
+  path.join(backendRoot, 'server.js'),
+  path.join(backendRoot, '.next', 'standalone', 'backend', 'server.js'),
 ];
 
 for (const main of candidates) {
