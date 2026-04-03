@@ -33,7 +33,7 @@ export default function HomePage() {
           {[
             { t: '50+ templates', d: 'Fashion, food, electronics, crafts, and more — all mobile-first.' },
             { t: 'Payments built-in', d: 'Paystack webhooks and optional mobile money flows.' },
-            { t: 'Deploy with Coolify', d: 'Dockerized services with SSL and subdomain automation.' },
+            { t: 'Deploy with Coolify', d: 'Host on Coolify with SSL and subdomain-friendly routing.' },
           ].map((x) => (
             <div key={x.t} className="rounded-2xl border border-earth-800/10 bg-white/70 p-6 shadow-sm backdrop-blur">
               <h3 className="font-display text-lg font-semibold text-earth-950">{x.t}</h3>

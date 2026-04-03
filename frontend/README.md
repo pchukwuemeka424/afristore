@@ -33,11 +33,15 @@ The platform is designed to reduce the barrier to digital commerce by combining 
 
 See [docs/DEVELOPER_ONBOARDING.md](docs/DEVELOPER_ONBOARDING.md) for full onboarding.
 
-From the **repository root** (where `package.json` and `docker-compose.yml` live):
+From the **repository root** (where the root `package.json` lives):
 
 ```bash
 npm install
-docker compose up -d mongo
+```
+
+Use **MongoDB Atlas** (recommended) or a local **mongod** instance. Set **`DATABASE_URL`** in `backend/.env` (e.g. `mongodb+srv://...` or `mongodb://127.0.0.1:27017/afristore`), then:
+
+```bash
 npm run db:seed
 npm run dev
 ```

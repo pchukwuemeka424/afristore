@@ -9,7 +9,7 @@ Monorepo layout:
 ## Prerequisites
 
 - Node.js 20+
-- Docker (for local MongoDB) or a MongoDB Atlas / hosted URI
+- MongoDB — **Atlas** (recommended) or a local **mongod** install
 
 ## Local setup
 
@@ -28,21 +28,15 @@ Monorepo layout:
    cp frontend/.env.example frontend/.env
    ```
 
-3. Start MongoDB:
+3. Set `DATABASE_URL` in **`backend/.env`** (Atlas `mongodb+srv://...` or local `mongodb://127.0.0.1:27017/afristore`).
 
-   ```bash
-   docker compose up -d mongo
-   ```
-
-4. Set `DATABASE_URL` in **`backend/.env`** (e.g. `mongodb://127.0.0.1:27017/afristore` or Atlas `mongodb+srv://...`).
-
-5. Seed **50 templates** (MongoDB creates collections on first write; no separate schema push):
+4. Seed **50 templates** (MongoDB creates collections on first write; no separate schema push):
 
    ```bash
    npm run db:seed
    ```
 
-6. Run backend + frontend:
+5. Run backend + frontend:
 
    ```bash
    npm run dev
@@ -51,7 +45,7 @@ Monorepo layout:
    - **Backend API**: http://localhost:3001/api (e.g. http://localhost:3001/api/health)
    - **Web**: http://localhost:3000
 
-7. Ensure `frontend/.env` has `NEXT_PUBLIC_API_URL=http://localhost:3001`.
+6. Ensure `frontend/.env` has `NEXT_PUBLIC_API_URL=http://localhost:3001`.
 
 ## Architecture notes
 

@@ -1,4 +1,4 @@
-# Paste into Coolify → Web app → Advanced → Custom Docker Labels (or equivalent)
+# Paste into Coolify → frontend service → Advanced → custom labels (UI may say "Docker labels")
 # ONLY if subdomains still return 503 after a full rebuild — some Coolify builds omit image LABELs.
 # One key=value per line. Domains must still be apex-only: https://acetchapp.link (no *. in Coolify Domains).
 # Edit acetchapp.link if your apex differs.
