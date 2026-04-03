@@ -55,3 +55,19 @@ npm run db:seed -w backend
 ```
 
 `NEXT_PUBLIC_API_URL` must be the public HTTPS backend URL (no trailing slash).
+
+## Storefront subdomains (`slug.yourdomain.com`)
+
+**Do not** add `https://*.yourdomain.com` or `http://*.yourdomain.com` in Coolify **Domains** for the web app. Coolify generates Traefik rules with `Host(\`*.domain\`)`, which Traefik v3 rejects for TLS (`HostSNI` error), and Let’s Encrypt **HTTP-01** cannot issue wildcard certificates — you get 503 / “no available server”.
+
+**Correct Coolify setup (web service):**
+
+1. **Domains:** only the apex, e.g. `https://acetchapp.link` (no `*.…` entry).
+2. **Direction:** keep **Allow www & non-www** (or whatever you use for the apex).
+3. **Redeploy** so the image includes the Traefik `LABEL`s from `apps/web/Dockerfile` — they add a `HostRegexp` router for `*.acetchapp.link` (excludes `api` and `coolify` hosts) with TLS and no broken wildcard ACME.
+
+**Cloudflare:** SSL mode **Full** (not Strict) is fine — the origin can use Traefik’s default certificate for that router.
+
+**If you added a manual file** under `/data/coolify/proxy/dynamic/` for wildcards earlier, remove it to avoid duplicate routers, then `docker restart coolify-proxy`.
+
+**Other apex domains:** edit the `traefik.http.routers.afristore-wildcard.rule` `LABEL` in `apps/web/Dockerfile` so the host matches `NEXT_PUBLIC_STORE_BASE`.
