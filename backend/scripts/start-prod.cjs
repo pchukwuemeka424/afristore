@@ -11,6 +11,11 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 
 const port = process.env.PORT || '3001';
+// Docker/Coolify set HOSTNAME to the container ID (e.g. "2a5c2864c307"),
+// which makes Next.js bind to that hostname only — unreachable via localhost.
+// Force 0.0.0.0 so the server is reachable from the proxy and healthchecks.
+const hostname = '0.0.0.0';
+
 // Resolve from this file's directory, never from process.cwd().
 const scriptDir = __dirname;               // …/scripts
 const appRoot   = path.join(scriptDir, '..'); // one level up = backend root in image
@@ -29,7 +34,7 @@ for (const main of candidates) {
   const appDir = path.dirname(main);
   const r = spawnSync(process.execPath, [main], {
     stdio: 'inherit',
-    env: { ...process.env, PORT: String(port) },
+    env: { ...process.env, PORT: String(port), HOSTNAME: hostname },
     cwd: appDir,
   });
   process.exit(r.status !== null && r.status !== undefined ? r.status : 1);
