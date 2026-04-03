@@ -18,6 +18,18 @@ Use service-level env files:
 | Backend | repository root | `backend/Dockerfile` | `3001` |
 | Frontend | repository root | `frontend/Dockerfile` | `3000` |
 
+### Backend: logs still show `next start` or standalone warning
+
+That output means the container is **not** using the image `CMD` (`node scripts/start-prod.cjs`). Fix **all** of the following on the **backend** service:
+
+1. **Build pack:** **Dockerfile** (Coolify defaults to Nixpacks — switch it).
+2. **Base directory:** **`/`** (repo root). The Dockerfile copies the monorepo root; a base of `/backend` alone will not match this Dockerfile’s `COPY` layout.
+3. **Dockerfile path:** `backend/Dockerfile`.
+4. **Start command:** **clear it** (empty). If Coolify has `next start -p 3001` or `npm start` saved from an old setup, it overrides the Dockerfile and you will keep seeing `next start`. Optional explicit value: `node scripts/start-prod.cjs` (working directory is the image default).
+5. **Redeploy:** use **Rebuild** / disable “use cached image” so a new image is built from the current Git commit (otherwise an old layer can still contain the previous `package.json` scripts).
+
+**Healthcheck (Coolify):** `http://127.0.0.1:3001/api/health` — use a plain URL, no shell or npm text in the field.
+
 ## Required environment variables
 
 ### Backend (`backend/.env`)
