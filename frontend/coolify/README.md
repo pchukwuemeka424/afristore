@@ -28,9 +28,18 @@ That output means the container is **not** using the image `CMD` (`node scripts/
 4. **Start command:** **clear it** (empty). If Coolify has `next start -p 3001` or `npm start` saved from an old setup, it overrides the Dockerfile and you will keep seeing `next start`. Optional explicit value: `node scripts/start-prod.cjs` (working directory is the image default).
 5. **Redeploy:** use **Rebuild** / disable “use cached image” so a new image is built from the current Git commit (otherwise an old layer can still contain the previous `package.json` scripts).
 
-**Healthcheck (Coolify):** `http://127.0.0.1:3001/api/health` — use a plain URL only (no env interpolation, no pasted `npm` output). If deployment logs show a garbled URL like `localhost:…@0.1.0 start`, clear the field and enter the URL above; port must match the service (`3001` for the API).
+**Healthcheck (Coolify):** `http://127.0.0.1:3001/health` or `…/api/health` — plain URL only (no env interpolation, no pasted `npm` output). If deployment logs show a garbled URL like `localhost:…@0.1.0 start`, clear the field and re-enter; port must be **3001** for this API.
 
 **“No production server found”** with `node scripts/start-prod.cjs`: older launchers used `process.cwd()`; the script now resolves `server.js` from its path so a wrong container working directory still works. Redeploy after pulling that change.
+
+### Backend: Traefik / browser shows “No available server”
+
+That usually means the **proxy has no healthy upstream** (wrong port, failed healthcheck, or the app never listened).
+
+1. **Application port** — In Coolify **Network** / **Ports** for the **backend** service, set the port to **3001** (not Coolify’s default **3000**). It must match `EXPOSE` / `PORT` in `backend/Dockerfile`.
+2. **Healthcheck URL** — Prefer `http://127.0.0.1:3001/health` (or `…/api/health`). One plain URL; no env placeholders or pasted shell/`npm` text.
+3. **Logs** — Confirm the container prints Next.js **Ready** and is listening on **0.0.0.0** (the image sets `HOSTNAME=0.0.0.0`). If the process exits immediately, check `docker logs` for errors.
+4. **Redeploy** after changing port or healthcheck so Traefik picks up a healthy container.
 
 ## Required environment variables
 

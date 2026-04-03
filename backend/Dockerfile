@@ -31,8 +31,8 @@ COPY backend/scripts/start-prod.cjs ./scripts/start-prod.cjs
 
 EXPOSE 3001
 # Coolify: leave "Custom start command" empty, or use: node scripts/start-prod.cjs
-# Health (Coolify UI): http://127.0.0.1:3001/api/health — do not use $npm_package_version or other env typos in the URL
+# Health (Coolify UI): http://127.0.0.1:3001/health or …/api/health — plain URL only
 HEALTHCHECK --interval=10s --timeout=5s --start-period=40s --retries=5 \
-  CMD wget -qO- http://127.0.0.1:3001/api/health >/dev/null || exit 1
+  CMD wget -qO- http://127.0.0.1:3001/health >/dev/null || exit 1
 
 CMD ["node", "scripts/start-prod.cjs"]
