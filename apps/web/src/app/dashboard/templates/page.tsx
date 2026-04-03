@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
+import { Suspense, useCallback, useEffect, useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { apiFetch } from '@/lib/api';
 
@@ -1001,7 +1001,7 @@ function categoryForVariant(variantId: string): SectionCategoryId | null {
   return null;
 }
 
-export default function TemplateManagementPage() {
+function TemplateManagementPageContent() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -1318,5 +1318,13 @@ export default function TemplateManagementPage() {
         </div>
       </section>
     </div>
+  );
+}
+
+export default function TemplateManagementPage() {
+  return (
+    <Suspense fallback={<div className="p-10 text-center">Loading…</div>}>
+      <TemplateManagementPageContent />
+    </Suspense>
   );
 }

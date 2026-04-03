@@ -22,6 +22,7 @@ type Store = {
   heroSubtitle?: string | null;
   heroImageUrl?: string | null;
   heroAlign?: 'left' | 'center' | 'right';
+  whatsappPhone?: string | null;
 };
 
 type Product = {
