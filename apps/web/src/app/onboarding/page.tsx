@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { slugify } from '@/lib/slug';
+import { storeUrl } from '@/lib/store-url';
 
 const LANGS = [
   { id: 'en', label: 'English' },
@@ -18,8 +19,6 @@ const CURRENCIES = [
   { id: 'ZAR', label: 'Rand (ZAR)' },
   { id: 'XOF', label: 'CFA (XOF)' },
 ];
-
-const STORE_BASE = process.env.NEXT_PUBLIC_STORE_BASE ?? 'localhost:3000';
 
 export default function OnboardingPage() {
   const { user, loading } = useAuth();
@@ -51,8 +50,7 @@ export default function OnboardingPage() {
   }
 
   const previewSlug = slugify(slug) || 'your-store';
-  const storeUrlHttp = `http://${STORE_BASE}/s/${previewSlug}`;
-  const hostOnly = STORE_BASE.split(':')[0];
+  const previewUrl = storeUrl(previewSlug);
 
   if (loading || !user) return <div className="p-10 text-center">Loading…</div>;
 
@@ -62,11 +60,11 @@ export default function OnboardingPage() {
       <h1 className="mt-3 font-display text-3xl font-semibold">Name your store &amp; subdomain</h1>
       <p className="mt-3 text-earth-800/85">
         Your <strong className="text-earth-950">store name</strong> appears on receipts and the dashboard. Your{' '}
-        <strong className="text-earth-950">subdomain</strong> is the unique slug for your shop URL and for DNS (e.g.{' '}
-        <span className="font-mono text-sm">
-          {previewSlug}.{hostOnly}
+        <strong className="text-earth-950">subdomain</strong> is the unique slug for your shop URL (e.g.{' '}
+        <span className="font-mono text-sm break-all">
+          {previewUrl}
         </span>
-        ) when you connect a custom domain.
+        ).
       </p>
       <div className="mt-8 space-y-4">
         <div>
@@ -98,15 +96,8 @@ export default function OnboardingPage() {
             autoCorrect="off"
           />
           <div className="mt-3 rounded-xl border border-jade-600/20 bg-jade-500/5 px-3 py-2.5 text-sm text-earth-800">
-            <p className="text-xs font-semibold uppercase tracking-wide text-jade-800">Public storefront (dev)</p>
-            <p className="mt-1 break-all font-mono text-xs text-earth-950">{storeUrlHttp}</p>
-            <p className="mt-2 text-xs text-earth-700/85">
-              Production example:{' '}
-              <span className="font-mono text-earth-900">
-                https://{previewSlug}.{hostOnly}
-              </span>{' '}
-              when your DNS points <span className="font-mono">{hostOnly}</span> to AfriStore.
-            </p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-jade-800">Public storefront</p>
+            <p className="mt-1 break-all font-mono text-xs text-earth-950">{previewUrl}</p>
           </div>
         </div>
         <div>

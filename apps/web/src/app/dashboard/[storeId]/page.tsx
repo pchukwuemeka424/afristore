@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { apiFetch } from '@/lib/api';
+import { storeUrl } from '@/lib/store-url';
 import { StorefrontPreview } from '@/components/storefront/StorefrontPreview';
 
 type Store = {
@@ -126,7 +127,9 @@ export default function StoreDashboardPage() {
           </p>
         </div>
         <a
-          href={`/s/${store.slug}`}
+          href={storeUrl(store.slug)}
+          target="_blank"
+          rel="noopener noreferrer"
           className="rounded-xl border border-earth-800/15 px-4 py-2 text-sm font-medium hover:bg-white"
         >
           View live storefront

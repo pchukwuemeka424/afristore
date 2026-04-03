@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { apiFetch, uploadProductImage } from '@/lib/api';
+import { storeUrl } from '@/lib/store-url';
 
 type Store = {
   id: string;
@@ -266,7 +267,9 @@ export default function StoreProductsPage() {
           <p className="text-sm text-earth-800/75">Add, edit, and remove catalog items. Currency: {store.currency}</p>
         </div>
         <a
-          href={`/s/${store.slug}`}
+          href={storeUrl(store.slug)}
+          target="_blank"
+          rel="noopener noreferrer"
           className="rounded-xl border border-earth-800/15 px-4 py-2 text-sm font-medium hover:bg-white"
         >
           View storefront

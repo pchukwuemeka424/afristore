@@ -6,8 +6,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { apiFetch } from '@/lib/api';
 import { slugify } from '@/lib/slug';
-
-const STORE_BASE = process.env.NEXT_PUBLIC_STORE_BASE ?? 'localhost:3000';
+import { storeUrl } from '@/lib/store-url';
 
 export default function DeployPage() {
   const { user, loading } = useAuth();
@@ -76,8 +75,7 @@ export default function DeployPage() {
   if (loading || !user) return <div className="p-10 text-center">Loading…</div>;
 
   const previewSlug = slugify(slug) || 'your-store';
-  const storeUrl = `http://${STORE_BASE}/s/${previewSlug}`;
-  const hostOnly = STORE_BASE.split(':')[0];
+  const previewUrl = storeUrl(previewSlug);
 
   return (
     <div className="mx-auto max-w-lg px-6 py-16">
@@ -89,14 +87,8 @@ export default function DeployPage() {
         </p>
       )}
       <p className="mt-3 text-earth-800/85">
-        Your public shop URL (local):{' '}
-        <span className="font-mono text-xs break-all rounded bg-earth-100 px-2 py-0.5 text-earth-950">{storeUrl}</span>
-      </p>
-      <p className="mt-2 text-xs text-earth-700/80">
-        Subdomain for custom DNS:{' '}
-        <span className="font-mono text-earth-900">
-          {previewSlug}.{hostOnly}
-        </span>
+        Your public shop URL:{' '}
+        <span className="font-mono text-xs break-all rounded bg-earth-100 px-2 py-0.5 text-earth-950">{previewUrl}</span>
       </p>
       <div className="mt-8 space-y-4">
         <div>
