@@ -13,6 +13,15 @@ const apiOrigin = normalizeApiOrigin(process.env.NEXT_PUBLIC_API_URL ?? 'http://
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '/**',
+      },
+    ],
+  },
   ...(isProd && { output: 'standalone' }),
   env: {
     NEXT_PUBLIC_API_URL: apiOrigin,
