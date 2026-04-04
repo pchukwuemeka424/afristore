@@ -1,11 +1,18 @@
-# Paste into Coolify → frontend service → Advanced → custom labels (UI may say "Docker labels")
-# ONLY if subdomains still return 503 after a full rebuild — some Coolify builds omit image LABELs.
-# One key=value per line. Domains must still be apex-only: https://acetchapp.link (no *. in Coolify Domains).
-# Edit acetchapp.link if your apex differs.
+# Optional addon when Coolify's Host(`*.domain`) does not match real subdomains (503).
+# Paste ONLY these lines at the end of your service labels (keep all Coolify-generated lines).
+# Match tls.certresolver to your service (here: letsencrypt — copy from https-0-* if different).
+# Edit acetchapp.link and api./coolify. exclusions if your domain or hostnames differ.
 
-traefik.http.routers.afristore-wildcard.entrypoints=https,http
-traefik.http.routers.afristore-wildcard.priority=10000
-traefik.http.routers.afristore-wildcard.tls=true
-traefik.http.routers.afristore-wildcard.service=afristore-wildcard-svc
+traefik.http.routers.afristore-wildcard-http.entryPoints=http
+traefik.http.routers.afristore-wildcard-http.priority=10000
+traefik.http.routers.afristore-wildcard-http.middlewares=redirect-to-https
+traefik.http.routers.afristore-wildcard-http.rule=HostRegexp(`^[a-z0-9-]+\.acetchapp\.link$`) && !Host(`api.acetchapp.link`) && !Host(`coolify.acetchapp.link`)
+traefik.http.routers.afristore-wildcard-http.service=afristore-wildcard-svc
+traefik.http.routers.afristore-wildcard-https.entryPoints=https
+traefik.http.routers.afristore-wildcard-https.priority=10000
+traefik.http.routers.afristore-wildcard-https.middlewares=gzip
+traefik.http.routers.afristore-wildcard-https.tls=true
+traefik.http.routers.afristore-wildcard-https.tls.certresolver=letsencrypt
+traefik.http.routers.afristore-wildcard-https.rule=HostRegexp(`^[a-z0-9-]+\.acetchapp\.link$`) && !Host(`api.acetchapp.link`) && !Host(`coolify.acetchapp.link`)
+traefik.http.routers.afristore-wildcard-https.service=afristore-wildcard-svc
 traefik.http.services.afristore-wildcard-svc.loadbalancer.server.port=3000
-traefik.http.routers.afristore-wildcard.rule=HostRegexp(`^[a-z0-9-]+\.acetchapp\.link$`) && !Host(`api.acetchapp.link`) && !Host(`coolify.acetchapp.link`)

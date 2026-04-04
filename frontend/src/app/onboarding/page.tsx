@@ -34,6 +34,24 @@ export default function OnboardingPage() {
   }, [loading, user, router]);
 
   useEffect(() => {
+    if (!user) return;
+    try {
+      const raw = sessionStorage.getItem('afristore_hero_prefill');
+      if (!raw) return;
+      const { business, category } = JSON.parse(raw) as { business?: string; category?: string };
+      if (business) setName(business);
+      if (category) {
+        const existing = sessionStorage.getItem('afristore_onboarding');
+        const base = existing ? JSON.parse(existing) : {};
+        sessionStorage.setItem('afristore_onboarding', JSON.stringify({ ...base, niche: category }));
+      }
+      sessionStorage.removeItem('afristore_hero_prefill');
+    } catch {
+      sessionStorage.removeItem('afristore_hero_prefill');
+    }
+  }, [user]);
+
+  useEffect(() => {
     if (!slugManual && name.trim()) {
       setSlug(slugify(name));
     }
@@ -42,9 +60,11 @@ export default function OnboardingPage() {
   function next() {
     const s = slugify(slug);
     if (!name.trim() || s.length < 2) return;
+    const existing = sessionStorage.getItem('afristore_onboarding');
+    const base = existing ? JSON.parse(existing) : {};
     sessionStorage.setItem(
       'afristore_onboarding',
-      JSON.stringify({ name: name.trim(), slug: s, language, currency }),
+      JSON.stringify({ ...base, name: name.trim(), slug: s, language, currency }),
     );
     router.push('/onboarding/category');
   }

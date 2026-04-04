@@ -1,30 +1,30 @@
-import Image from 'next/image';
+import { HeroLeadForm } from '@/components/HeroLeadForm';
 import Link from 'next/link';
 
 const features = [
   {
     title: 'Your store, your brand',
-    body: 'Create a proper ecommerce storefront with your name and look, from side projects and market stalls to growing labels. No coding required.',
+    body: 'A polished site for ecommerce brands, tailors, boutiques, and makers. Show collections, lookbooks, or services under your own name. No coding required.',
   },
   {
     title: 'Get paid online',
-    body: 'Paystack is built in so you can accept cards today and extend toward mobile money and USSD as your customers prefer.',
+    body: 'Accept cards online and grow toward mobile money and USSD—the ways many customers already prefer to pay.',
   },
   {
-    title: 'Meet buyers where they are',
-    body: 'Fast, phone friendly product pages and WhatsApp friendly checkout habits, ideal for busy shoppers and tight data.',
+    title: 'Meet clients where they are',
+    body: 'Phone friendly pages and WhatsApp friendly flows for how Africans discover and buy: comparing fabrics, sizing, or booking your next slot on everyday data.',
   },
   {
-    title: 'Sell products or services',
-    body: 'Templates for physical goods, food, electronics, crafts, and service bookings. One platform whether you ship boxes or take appointments.',
+    title: 'Products, fittings, or bookings',
+    body: 'Layouts for retail, custom tailoring, fashion drops, beauty, food, electronics, and appointment based work. One platform for catalogs, deposits, and service menus.',
   },
   {
     title: 'Look credible from day one',
-    body: 'Hosting ready for SSL and clean URLs so first time entrepreneurs and established sellers alike look trustworthy to new customers.',
+    body: 'Hosting ready for SSL and clean URLs so new entrepreneurs and established studios alike look professional to every enquiry.',
   },
   {
     title: 'Words that sell',
-    body: 'Product descriptions and promos assisted by AI, in your tone, so solo founders and small teams can refresh copy without hiring a studio.',
+    body: 'Product and service copy assisted by AI, in your tone, so solo tailors, designers, and small teams can refresh descriptions without a full marketing hire.',
   },
 ];
 
@@ -59,49 +59,53 @@ export default function HomePage() {
         </div>
       </header>
 
-      <section className="relative isolate flex min-h-[min(58vh,520px)] items-center">
-        <Image
-          src="/images/man.jpg"
-          alt="Entrepreneur building an online store with AfriStore"
-          fill
-          priority
-          className="object-cover object-center"
-          sizes="100vw"
-        />
-        {/* Background overlays (solid tones only, no gradients) */}
-        <div className="absolute inset-0 bg-earth-950/78" aria-hidden />
-        <div className="absolute inset-0 bg-black/35" aria-hidden />
-        <div className="pointer-events-none absolute inset-0 bg-jade-600/12" aria-hidden />
+      <section
+        className="relative overflow-hidden border-b border-earth-800/15 bg-earth-100"
+        aria-labelledby="hero-heading"
+      >
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-1 bg-jade-600" aria-hidden />
         <div
-          className="pointer-events-none absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%2240%22%20height=%2240%22%20viewBox=%220%200%2040%2040%22%3E%3Cpath%20d=%22M0%2040h40V0H0v40zm1-1h38V1H1v38z%22%20fill=%22%23ffffff%22%20fill-opacity=%22.04%22/%3E%3C/svg%3E')] opacity-90"
+          className="pointer-events-none absolute inset-0 opacity-[0.07]"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath fill='%231c1410' d='M0 0h1v1H0V0zm16 16h1v1h-1v-1z'/%3E%3C/svg%3E")`,
+          }}
           aria-hidden
         />
 
-        <div className="relative z-10 mx-auto w-full max-w-6xl px-5 py-12 sm:px-6 sm:py-14">
-          <div className="max-w-2xl border-l-4 border-jade-500 pl-6 sm:pl-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-earth-100/90">
-              Ecommerce start for every kind of entrepreneur
-            </p>
-            <h1 className="mt-5 font-display text-4xl font-semibold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-[3.25rem]">
-              Create your own online store and start selling, from first idea to real orders.
-            </h1>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-earth-100/95">
-              AfriStore helps you launch ecommerce without a dev team: open your store, list products or services, and get
-              paid, whether you are testing a side hustle, taking your stall online, or growing an existing brand.
-            </p>
-            <div className="mt-10 flex flex-wrap gap-3">
-              <Link
-                href="/register"
-                className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-jade-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-jade-500"
+        <div className="relative mx-auto max-w-6xl px-5 py-14 sm:px-6 sm:py-20 lg:py-24">
+          <div className="grid gap-12 lg:grid-cols-12 lg:items-start lg:gap-10 xl:gap-14">
+            <div className="lg:col-span-6 xl:col-span-7">
+              <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-jade-600">Storefronts · Get paid · Mobile-first</p>
+              <h1
+                id="hero-heading"
+                className="mt-4 font-display text-[2rem] font-semibold leading-[1.08] tracking-tight text-earth-950 sm:text-4xl xl:text-[2.75rem]"
               >
-                Start your store free
-              </Link>
-              <Link
-                href="/login"
-                className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-white/25 bg-white/10 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-white/15"
-              >
-                Sign in to your store
-              </Link>
+                Create your free ecommerce site with{' '}
+                <span className="text-jade-600">AfriStore</span>
+                <span className="text-earth-800/70">.</span>
+              </h1>
+              <p className="mt-6 max-w-lg text-base leading-relaxed text-earth-800/90 sm:text-lg">
+                Sell products, services, or bookings from a real storefront—templates tuned for how African customers
+                discover and pay. No code. No credit card to begin.
+              </p>
+              <ul className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4" role="list">
+                {[
+                  { k: 'Templates', v: 'Retail & services' },
+                  { k: 'Reach', v: 'WhatsApp-friendly flows' },
+                ].map((item) => (
+                  <li
+                    key={item.k}
+                    className="flex min-w-[10rem] flex-col gap-0.5 border-l-2 border-jade-600 pl-3"
+                  >
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-earth-800/55">{item.k}</span>
+                    <span className="text-sm font-medium text-earth-950">{item.v}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="lg:col-span-6 xl:col-span-5 lg:pt-1">
+              <HeroLeadForm />
             </div>
           </div>
         </div>
@@ -111,18 +115,19 @@ export default function HomePage() {
         <div className="mx-auto max-w-6xl px-5 sm:px-6">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-xl">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-jade-600">Built for sellers like you</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-jade-600">Shaped for African markets</p>
               <h2 id="features-heading" className="mt-3 font-display text-3xl font-semibold tracking-tight text-earth-950 sm:text-4xl">
-                One ecommerce home for new founders and owners who are ready to grow.
+                One place for African ecommerce, tailoring, creative, and service brands to grow.
               </h2>
               <p className="mt-4 text-earth-800/95">
-                Side hustlers, shop owners, creators, and service providers all start somewhere. AfriStore gives you the
-                same core tools: a real online store, regional payments, and layouts that work on real phones, so you can
-                focus on products and customers, not infrastructure.
+                African founders in retail, fashion, tailoring, digital products, and client services need a serious site,
+                regional payments, and pages that load well on the phones people actually use. AfriStore keeps the tech
+                simple so you can focus on clients, collections, and your next launch.
               </p>
             </div>
             <p className="max-w-sm text-sm leading-relaxed text-earth-800/80 lg:text-right">
-              Skip the generic brochure site. Put ecommerce first: list, sell, and get paid in one place.
+              Less juggling spreadsheets and DMs for every sale. List offerings, take payments, and look professional in one
+              flow.
             </p>
           </div>
 
@@ -148,7 +153,7 @@ export default function HomePage() {
           <div>
             <p className="font-display text-lg font-semibold text-earth-950">AfriStore</p>
             <p className="mt-1 text-sm text-earth-800/80">
-              Helping entrepreneurs create online stores and run ecommerce that fits how Africa buys.
+              Storefronts for African entrepreneurs, ecommerce brands, tailors, and creative businesses.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">

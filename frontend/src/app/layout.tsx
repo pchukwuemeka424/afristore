@@ -14,9 +14,9 @@ const sans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'AfriStore: Create your online store & start selling',
+  title: 'AfriStore: Online stores for African entrepreneurs & makers',
   description:
-    'Ecommerce for entrepreneurs: launch your own store, take payments, and grow, whether you are starting out or scaling a brand.',
+    'Ecommerce for Africans: tailors, fashion, makers, and service businesses get storefronts, Paystack, paths toward mobile money, and phone first templates.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

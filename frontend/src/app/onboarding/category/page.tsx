@@ -24,6 +24,17 @@ export default function CategoryPage() {
       .catch(() => setNiches([]));
   }, []);
 
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem('afristore_onboarding');
+      if (!raw) return;
+      const niche = JSON.parse(raw).niche as string | undefined;
+      if (niche) setSelected(niche);
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
   function next() {
     if (!selected) return;
     const raw = sessionStorage.getItem('afristore_onboarding');
