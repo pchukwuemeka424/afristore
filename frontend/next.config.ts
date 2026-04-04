@@ -1,7 +1,15 @@
 import type { NextConfig } from 'next';
 
 const isProd = process.env.NODE_ENV === 'production';
-const apiOrigin = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
+
+/** Next rewrites need an absolute URL; allow `host:port` without scheme in .env. */
+function normalizeApiOrigin(raw: string): string {
+  const t = raw.trim().replace(/\/$/, '');
+  if (/^https?:\/\//i.test(t)) return t;
+  return `http://${t}`;
+}
+
+const apiOrigin = normalizeApiOrigin(process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001');
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
